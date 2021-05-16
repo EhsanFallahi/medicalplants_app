@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/data/repository/person/person_repository.dart';
 import 'package:medicinalplants_app/util/constant.dart';
+import 'package:medicinalplants_app/view/user/dashboard/main_dashboard.dart';
 
 class LoginController extends GetxController {
   TextEditingController fullNameController = TextEditingController();
@@ -73,6 +74,7 @@ class LoginController extends GetxController {
         person = Person.fromJson(value.data);
         clearController();
         showSnackBar('register', 'you_are_registered', Colors.green);
+        Get.off(()=>MainDashboard(person: person,),arguments: person);
       } else {
         showSnackBar('network', 'network_error', Colors.redAccent);
       }
@@ -98,7 +100,7 @@ class LoginController extends GetxController {
 
   void loginUserAction() {
     clearController();
-    print('welcome user');
+    Get.off(()=>MainDashboard(person: person,),arguments: person);
   }
 
   void loginAdminAction() {

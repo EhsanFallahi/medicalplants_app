@@ -1,3 +1,5 @@
+import 'package:medicinalplants_app/util/constant.dart';
+
 class Product {
   int id;
   String title;
@@ -27,7 +29,7 @@ class Product {
     quantity = json['quantity'];
     price = json['price'];
     weight = json['weight'];
-    tagsId = json['tag'].cast<int>();
+    tagsId = json['tags'].cast<int>();
     picture = json['picture'];
     isDisplay = json['is_display'];
   }
@@ -40,7 +42,7 @@ class Product {
     data['quantity'] = this.quantity;
     data['price'] = this.price;
     data['weight'] = this.weight;
-    data['tag'] = this.tagsId;
+    data['tags'] = this.tagsId;
     data['picture'] = this.picture;
     data['is_display'] = this.isDisplay;
     return data;
