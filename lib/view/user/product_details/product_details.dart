@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:medicinalplants_app/controller/cart/cart_controller.dart';
 import 'package:medicinalplants_app/controller/favorites/favotites_controller.dart';
 import 'package:medicinalplants_app/controller/user/user_controller.dart';
+import 'package:medicinalplants_app/data/model/cart/cart.dart';
 import 'package:medicinalplants_app/data/model/favorites/favorites.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/data/model/product/product.dart';
+import 'package:medicinalplants_app/data/model/purchaseHistory/purchase_history.dart';
 import 'package:medicinalplants_app/util/constant.dart';
 import 'package:get/get.dart';
+import 'package:medicinalplants_app/view/user/cart/cart_screen.dart';
 
 class ProductDetails extends StatelessWidget {
   Product product;
@@ -15,10 +19,11 @@ class ProductDetails extends StatelessWidget {
 
   FavoritesController _favoritesController = Get.put(FavoritesController());
   UserController _userController = Get.put(UserController());
+  CartController _cartController = Get.put(CartController());
 
   @override
   Widget build(BuildContext context) {
-    final appBar=AppBar(
+    final appBar = AppBar(
         backgroundColor: Colors.grey,
         centerTitle: true,
         title: Text(
@@ -29,7 +34,7 @@ class ProductDetails extends StatelessWidget {
               color: INPUT_TEXTFORM_COLOR),
         ));
     return Scaffold(
-      appBar:appBar,
+      appBar: appBar,
       body: SingleChildScrollView(
         child: mainBody(context),
       ),
@@ -37,18 +42,103 @@ class ProductDetails extends StatelessWidget {
   }
 
   Widget mainBody(BuildContext context) {
-    return Column(
-      children: [
-        imageAndIconFavorites(context),
-        productTitle(),
-        divider(),
-        productDescription(),
-        divider(),
-        productQuantity(),
-        divider(),
-        rowOfSomeViews(),
-        orderButton()
-      ],
+    return Obx(
+      () => Column(
+        children: [
+          imageAndIconFavorites(context),
+          productTitle(),
+          divider(),
+          productDescription(),
+          divider(),
+          productQuantity(),
+          divider(),
+          rowOfSomeViews(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _cartController.onPressedOrderButton.value
+                  ? quantityCounter()
+                  : orderButton(),
+              _cartController.onPressedOrderButton.value
+                  ? TextButton(
+                      onPressed: () {
+                        _cartController.isOrdered.value?Get.to(()=>CartScreen()):
+                        _cartController.addToCart(
+                            Cart(userId: person.id, purchaseHistory: [
+                              PurchaseHistory(
+                                  productId: product.id,
+                                  count: _cartController.purchaseQuantity.value)
+                            ]),
+                            person,
+                            product);
+                      },
+                      child: Text(
+                        'add_to_cart'.tr,
+                        style: TextStyle(
+                            fontFamily: 'MainFont',
+                            color: Button_RED_COLOR,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : Text('')
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget quantityCounter() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: 160,
+        height: 45,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: LABLE_TEXTFORM_COLOR, width: 2),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                _cartController.incraseQuantity(product);
+              },
+              color: INPUT_TEXTFORM_COLOR,
+            ),
+            Obx(
+              () => Text(
+                _cartController.purchaseQuantity.value.toString(),
+                style: TextStyle(
+                    color: INPUT_TEXTFORM_COLOR,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 21),
+              ),
+            ),
+            IconButton(
+              icon: _cartController.isDeleteProductPurchase.value
+                  ? FittedBox(
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.delete_forever_rounded,
+                        color: Button_RED_COLOR,
+                      ),
+                      onPressed: () {
+                        _cartController.onPressedOrderButton(false);
+                      },
+                    ),
+                  )
+                  : Icon(Icons.remove),
+              onPressed: () {
+                _cartController.decraseQuantity(product);
+              },
+              color: INPUT_TEXTFORM_COLOR,
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -69,7 +159,7 @@ class ProductDetails extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomCenter,
         child: SizedBox(
-          width: 100,
+          width: 140,
           height: 40,
           child: buttonOfOrder(),
         ),
@@ -78,15 +168,29 @@ class ProductDetails extends StatelessWidget {
   }
 
   Widget buttonOfOrder() {
-    return ElevatedButton.icon(
+    return Obx(
+      () => FittedBox(
+        child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-            primary: Button_RED_COLOR, // background
+            primary: _cartController.isOrdered.value
+                ? Colors.green
+                : Button_RED_COLOR, // background
             onPrimary: Colors.white, // foreground
           ),
-          onPressed: () {},
+          onPressed: () {
+            _cartController.isOrdered.value?Get.to(()=>CartScreen()):
+            _cartController.onPressedOrderButton(true);
+            // _cartController.addToCart(Cart(userId: person.id, purchaseHistory: [
+            //   PurchaseHistory(productId: product.id, count: 2)
+            // ]),person,product);
+          },
           icon: Icon(Icons.add_shopping_cart_rounded),
-          label: Text('order'.tr),
-        );
+          label: _cartController.isOrdered.value
+              ? Text('available_in_cart'.tr)
+              : Text('order'.tr),
+        ),
+      ),
+    );
   }
 
   Widget productPrice() {
@@ -212,35 +316,34 @@ class ProductDetails extends StatelessWidget {
 
   Widget iconButtonHandel() {
     return IconButton(
-        icon: !_favoritesController.isFavorites.value
-            ? emptyFavoriteIcon()
-            : fullFavoriteIcon(),
-        onPressed: () {
-          handelIconPressed();
-        },
-      );
+      icon: !_favoritesController.isFavorites.value
+          ? emptyFavoriteIcon()
+          : fullFavoriteIcon(),
+      onPressed: () {
+        handelIconPressed();
+      },
+    );
   }
 
   void handelIconPressed() {
     return _favoritesController.updateFavorites(
-            Favorites(userId: person.id, productId: [product.id]),
-            product.id);
+        Favorites(userId: person.id, productId: [product.id]), product.id);
   }
 
   Widget fullFavoriteIcon() {
     return Icon(
-              Icons.favorite_rounded,
-              color: Colors.redAccent,
-              size: 32,
-            );
+      Icons.favorite_rounded,
+      color: Colors.redAccent,
+      size: 32,
+    );
   }
 
   Widget emptyFavoriteIcon() {
     return Icon(
-              Icons.favorite_border_rounded,
-              color: Colors.black,
-              size: 32,
-            );
+      Icons.favorite_border_rounded,
+      color: Colors.black,
+      size: 32,
+    );
   }
 
   Widget productImage(BuildContext context) {

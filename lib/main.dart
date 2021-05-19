@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:medicinalplants_app/translation/localization_service.dart';
 import 'package:medicinalplants_app/util/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:medicinalplants_app/view/user/cart/cart_screen.dart';
 import 'package:medicinalplants_app/view/user/dashboard/main_dashboard.dart';
 import 'package:medicinalplants_app/view/user/login/login_screen.dart';
 import 'package:medicinalplants_app/view/user/profile/profile.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
                       fontSize: 20,
                     ),
                   ))),
-      home: SplashScreen(),
+      home: LoginScreen(),
     );
   }
 }

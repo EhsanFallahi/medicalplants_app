@@ -3,6 +3,7 @@ import 'package:medicinalplants_app/controller/product/product_controller.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/util/constant.dart';
 import 'package:get/get.dart';
+import 'package:medicinalplants_app/view/user/cart/cart_screen.dart';
 import 'package:medicinalplants_app/view/user/drawer/main_drawer.dart';
 import 'package:medicinalplants_app/widgets/bottom_sheet.dart';
 import 'package:medicinalplants_app/widgets/item/product_item.dart';
@@ -164,7 +165,7 @@ class MainDashboard extends StatelessWidget {
   Widget cartButton() {
     return IconButton(
       icon: cartIcon(),
-      onPressed: () {},
+      onPressed: () {Get.to(()=>CartScreen(),arguments: person);},
     );
   }
 

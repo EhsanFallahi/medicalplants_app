@@ -116,6 +116,14 @@ class StoreTraslation{
       "delete_from_list": "Delete from list",
       "your_favorites_list_is_empty": "Your favorites list is empty",
       "wrong_password": "Wrong password",
+      "your_cart_list_is_empty": "Your cart is empty",
+      "cancel_purchase": "Cancel purchase",
+      "available_in_stock": "Available in stock",
+      "available_in_cart": "Available in cart",
+      "complete_the_purchase_process": "Complete the purchase process",
+      "the_amount_payable": "The amount payable",
+      "add_to_cart": "Add to cart",
+      "number_of_orders": "Number of orders",
 
     };
     static const fa_IR={
@@ -226,6 +234,14 @@ class StoreTraslation{
       "delete_from_list": "حذف از لیست",
       "your_favorites_list_is_empty": "لیست علاقه‌مندی‌های شما خالی است",
       "wrong_password": "روز را بصورت صحیح وارد کنید",
+      "your_cart_list_is_empty": "محصولی در سبد خرید شما موجود نمی‌باشد",
+      "cancel_purchase": "انصراف از خرید",
+      "available_in_stock": "موجود در انبار",
+      "available_in_cart": "موجود در سبد خرید",
+      "complete_the_purchase_process": "تکمیل فرایند خرید",
+      "the_amount_payable": "مبلغ قابل پرداخت",
+      "add_to_cart": "افزودن به سبد خرید",
+      "number_of_orders": "تعداد سفارش",
 };
 
 }

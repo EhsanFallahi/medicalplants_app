@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/util/constant.dart';
+import 'package:medicinalplants_app/view/user/cart/cart_screen.dart';
 import 'package:medicinalplants_app/view/user/favorites/favorites_screen.dart';
 import 'package:medicinalplants_app/view/user/profile/profile.dart';
 import 'package:medicinalplants_app/widgets/change_language.dart';
@@ -11,6 +12,7 @@ import 'package:medicinalplants_app/widgets/loguot_button.dart';
 
 class MainDrawer extends StatelessWidget {
   Person person;
+
   MainDrawer({this.person});
 
   @override
@@ -94,7 +96,11 @@ class MainDrawer extends StatelessWidget {
   Widget cart() {
     return Padding(
       padding: const EdgeInsets.all(12),
-      child: TextButton(onPressed: () {}, child: cartText()),
+      child: TextButton(
+          onPressed: () {
+            Get.to(() => CartScreen(), arguments: person);
+          },
+          child: cartText()),
     );
   }
 
@@ -114,7 +120,7 @@ class MainDrawer extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: TextButton(
           onPressed: () {
-            Get.to(() => FavoritesScreen(),arguments: person);
+            Get.to(() => FavoritesScreen(), arguments: person);
           },
           child: favoriteListText()),
     );

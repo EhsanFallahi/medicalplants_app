@@ -1,16 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:medicinalplants_app/controller/favorites/favotites_controller.dart';
+import 'package:medicinalplants_app/controller/cart/cart_controller.dart';
 import 'package:medicinalplants_app/controller/user/user_controller.dart';
+import 'package:medicinalplants_app/data/model/cart/cart.dart';
 import 'package:medicinalplants_app/data/model/product/product.dart';
+import 'package:medicinalplants_app/data/model/purchaseHistory/purchase_history.dart';
 import 'package:medicinalplants_app/util/constant.dart';
 
-class FavoritesItem extends StatelessWidget {
-  FavoritesController _favoritesController = Get.put(FavoritesController());
+class CartItem extends StatelessWidget {
   UserController _userController = Get.put(UserController());
+  CartController _cartController = Get.put(CartController());
   Product product;
+  PurchaseHistory purchaseHistory;
 
-  FavoritesItem({this.product});
+  CartItem({this.product,this.purchaseHistory});
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +38,25 @@ class FavoritesItem extends StatelessWidget {
   }
 
   Widget bottomRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        deleteFromList(),
-        productPrice(),
+        // quantityCounter(),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'available_in_stock'.tr,
+                style: TextStyle(
+                    fontFamily: 'FontFa', fontSize: 16, color: Colors.green),
+              ),
+              cancelPurchase(),
+              productPrice(),
+            ],
+          ),
+        )
       ],
     );
   }
@@ -53,45 +71,16 @@ class FavoritesItem extends StatelessWidget {
     );
   }
 
-  Widget deleteFromList() {
-    return Expanded(
-      flex: 1,
-      child: gestureDetectorOfDelete(),
-    );
-  }
 
-  Widget gestureDetectorOfDelete() {
-    return GestureDetector(
-      onTap: () {
-        _favoritesController.deleteFavorites(product.id);
-      },
-      child: Expanded(
-        child: Row(
-          children: [
-            iconDelete(),
-            textOfDeleteFromList(),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget textOfDeleteFromList() {
+  Widget productPrice() {
     return Text(
-      'delete_from_list'.tr,
+      '${priceChangeFormat(product.price)}  ' + 'toman'.tr,
       style: TextStyle(
-          fontFamily: 'MainFont',
+          fontFamily: 'MainFa',
           fontSize: 21,
-          fontWeight: FontWeight.bold,
-          color: LABLE_TEXTFORM_COLOR),
-    );
-  }
-
-  Widget iconDelete() {
-    return Icon(
-      Icons.delete_forever_rounded,
-      size: 28,
-      color: LABLE_TEXTFORM_COLOR,
+          color: Button_RED_COLOR,
+          fontWeight: FontWeight.bold),
     );
   }
 
@@ -112,18 +101,12 @@ class FavoritesItem extends StatelessWidget {
         productTitle(),
         sizedBoxHeight_15(),
         productWeight(),
+        Text(
+          'number_of_orders'.tr+': ${purchaseHistory.count}',
+          style: TextStyle(
+              fontFamily: 'FontFa', fontSize: 16, color: LABLE_TEXTFORM_COLOR),
+        ),
       ],
-    );
-  }
-
-  Widget productPrice() {
-    return Text(
-      '${priceChangeFormat(product.price)}  ' + 'toman'.tr,
-      style: TextStyle(
-          fontFamily: 'MainFa',
-          fontSize: 21,
-          color: Button_RED_COLOR,
-          fontWeight: FontWeight.bold),
     );
   }
 
@@ -165,6 +148,43 @@ class FavoritesItem extends StatelessWidget {
         height: 100,
         width: 100,
       ),
+    );
+  }
+
+  Widget cancelPurchase() {
+    return gestureDetectorOfDelete();
+  }
+
+  Widget gestureDetectorOfDelete() {
+    return GestureDetector(
+      onTap: () {
+        _cartController.deleteFromCart(product.id);
+      },
+      child: Row(
+        children: [
+          iconDelete(),
+          textOfCancelPurchase(),
+        ],
+      ),
+    );
+  }
+
+  Widget textOfCancelPurchase() {
+    return Text(
+      'cancel_purchase'.tr,
+      style: TextStyle(
+          fontFamily: 'MainFont',
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: LABLE_TEXTFORM_COLOR),
+    );
+  }
+
+  Widget iconDelete() {
+    return Icon(
+      Icons.delete_forever_rounded,
+      size: 22,
+      color: LABLE_TEXTFORM_COLOR,
     );
   }
 }

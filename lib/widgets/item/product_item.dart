@@ -102,7 +102,7 @@ class ProductItem extends StatelessWidget {
     return Text(
       product.title,
       style: TextStyle(
-          fontFamily: 'MainFa',
+          fontFamily: 'MainFont',
           fontSize: 24,
           color: INPUT_TEXTFORM_COLOR,
           fontWeight: FontWeight.bold),
