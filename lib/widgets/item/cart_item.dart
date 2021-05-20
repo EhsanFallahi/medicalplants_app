@@ -142,8 +142,9 @@ class CartItem extends StatelessWidget {
   Widget productImage() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      child: Image.memory(
-        _userController.fromBase64(product.picture),
+      child: Image.network(
+        // _userController.fromBase64(product.picture),
+        product.picture,
         fit: BoxFit.fill,
         height: 100,
         width: 100,

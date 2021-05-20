@@ -361,8 +361,9 @@ class ProductDetails extends StatelessWidget {
   }
 
   Widget imageLoading(BuildContext context) {
-    return Image.memory(
-      _userController.fromBase64(product.picture),
+    return Image.network(
+      // _userController.fromBase64(product.picture),
+      product.picture,
       fit: BoxFit.fill,
       height: MediaQuery.of(context).size.height * 0.35,
       width: double.infinity,

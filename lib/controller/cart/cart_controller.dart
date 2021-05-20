@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:medicinalplants_app/controller/product/product_controller.dart';
 import 'package:medicinalplants_app/data/model/cart/cart.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/data/model/product/product.dart';
@@ -7,10 +8,13 @@ import 'package:medicinalplants_app/data/repository/cart/cart_repository.dart';
 import 'package:medicinalplants_app/data/repository/product/product_repository.dart';
 import 'package:medicinalplants_app/util/constant.dart';
 import 'package:medicinalplants_app/view/user/cart/cart_screen.dart';
+import 'package:medicinalplants_app/view/user/dashboard/main_dashboard.dart';
 
 class CartController extends GetxController {
   CartRepository _cartRepository = CartRepository();
   ProductRepository _productRepository = ProductRepository();
+  ProductController _productController = Get.put(ProductController());
+
   RxBool isLoading = false.obs;
   RxBool isOrdered = false.obs;
   RxBool onPressedOrderButton = false.obs;
@@ -207,36 +211,61 @@ class CartController extends GetxController {
   }
 
   void completePurchaseProcess() {
-    print('completePurchaseProcess');
     isLoading(true);
     allCarts.forEach((cart) async {
-      print('completePurchaseProcess allCarts.forEach');
       for (var i = 0; i < cart.purchaseHistory.length; i++) {
-        int productId=cart.purchaseHistory[i].productId;
-        await _cartRepository
-            .getDesiredProduct(productId)
-            .then((value) {
+        int productId = cart.purchaseHistory[i].productId;
+        await _cartRepository.getDesiredProduct(productId).then((value) {
           if (validateStatusCode(value.statusCode)) {
             Product tempProduct = Product.fromJson(value.data);
-            print('completePurchaseProcess Product.fromJson is title${tempProduct.title}');
             tempProduct.quantity -= cart.purchaseHistory[i].count;
-            print('final quantity product id is :${tempProduct.id} and quantity is:${tempProduct.quantity}');
             _productRepository.updateProduct(Product(
-                id: tempProduct.id,
-                title: tempProduct.title,
-                description: tempProduct.description,
-                picture: tempProduct.picture,
-                price: tempProduct.price,
-                weight: tempProduct.weight,
-                tagsId: tempProduct.tagsId,
-                isDisplay: tempProduct.isDisplay,
-                quantity: tempProduct.quantity,));
-          }else{print('network error');}
-
+              id: tempProduct.id,
+              title: tempProduct.title,
+              description: tempProduct.description,
+              picture: tempProduct.picture,
+              price: tempProduct.price,
+              weight: tempProduct.weight,
+              tagsId: tempProduct.tagsId,
+              isDisplay: tempProduct.isDisplay,
+              quantity: tempProduct.quantity,
+            ));
+          } else {
+            print('network error');
+          }
         });
       }
-      print('quantity product is updated!');
+      deleteAllProductsInCart();
     });
     isLoading(false);
+  }
+
+  void deleteAllProductsInCart() {
+    isLoading(true);
+    print('all cart lentght1 is:${allCarts.length}');
+    allCarts.forEach((cart) async {
+      await _cartRepository.deleteFromCart(cart.id).then((value) {
+        if (validateStatusCode(value.statusCode)) {
+          print('person cart is deleted');
+          getAllCarts();
+          print('all cart lentght2 is:${allCarts.length}');
+        } else {
+          print('network error');
+        }
+      });
+      if(allCarts.length==0){
+        // isOrdered(false);
+        _productController.getAllProducts();
+        Get.off(
+                () => MainDashboard(
+              person: person,
+            ),
+            arguments: person);
+      }
+    });
+    isLoading(false);
+
+
+
   }
 }

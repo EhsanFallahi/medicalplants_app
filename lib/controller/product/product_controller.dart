@@ -18,11 +18,15 @@ class ProductController extends GetxController {
 
   @override
   void onInit() {
+    print('on init product controller');
     getAllProducts();
     super.onInit();
   }
 
   void getAllProducts() {
+    allProduct=[];
+    validProduct=[];
+  print('in product contoroller get all products');
     isLoading(true);
     _productRepository.getALlProduct().then((value) {
       if (validateStatusCode(value.statusCode)) {
