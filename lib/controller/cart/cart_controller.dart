@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicinalplants_app/controller/product/product_controller.dart';
 import 'package:medicinalplants_app/data/model/cart/cart.dart';
@@ -19,6 +20,7 @@ class CartController extends GetxController {
   RxBool isOrdered = false.obs;
   RxBool onPressedOrderButton = false.obs;
   RxBool isDeleteProductPurchase = true.obs;
+
   RxInt purchaseQuantity = 1.obs;
   RxDouble totalPurchase = 0.0.obs;
   Person person;
@@ -29,12 +31,17 @@ class CartController extends GetxController {
 
   @override
   void onInit() {
+    print('oninit cartController');
     if (Get.arguments.runtimeType.toString() == 'List<Object>') {
       person = Get.arguments[0] as Person;
       product = Get.arguments[1] as Product;
+      // if(product.quantity==0||product.quantity==null){
+      //   isProductAvailable(false);
+      // }
     } else {
       person = Get.arguments;
     }
+
     getAllCarts();
     super.onInit();
   }
@@ -183,6 +190,7 @@ class CartController extends GetxController {
   incraseQuantity(Product product) {
     isDeleteProductPurchase(false);
     if (purchaseQuantity.value >= product.quantity) {
+      isDeleteProductPurchase(true);
       print('puchase is full');
       return 1;
     }
@@ -191,7 +199,7 @@ class CartController extends GetxController {
 
   decraseQuantity(Product product) {
     purchaseQuantity.value--;
-    if (purchaseQuantity.value == 1) {
+    if (purchaseQuantity.value <= 1) {
       isDeleteProductPurchase(true);
       return;
     }
@@ -218,6 +226,15 @@ class CartController extends GetxController {
         await _cartRepository.getDesiredProduct(productId).then((value) {
           if (validateStatusCode(value.statusCode)) {
             Product tempProduct = Product.fromJson(value.data);
+            if (tempProduct.quantity == 0) {
+              print('not apply purchase!');
+              Future.delayed(Duration(seconds: 2),(){
+                  showSnackBar('unsuccess_purchase'.tr,
+                    'this_product_is_not_available_in_stock'.tr, Colors.green);
+
+              });
+              return;
+            }
             tempProduct.quantity -= cart.purchaseHistory[i].count;
             _productRepository.updateProduct(Product(
               id: tempProduct.id,
@@ -253,19 +270,17 @@ class CartController extends GetxController {
           print('network error');
         }
       });
-      if(allCarts.length==0){
-        // isOrdered(false);
+      if (allCarts.length == 0) {
         _productController.getAllProducts();
+        isOrdered(false);
+        onPressedOrderButton(false);
         Get.off(
-                () => MainDashboard(
-              person: person,
-            ),
+            () => MainDashboard(
+                  person: person,
+                ),
             arguments: person);
       }
     });
     isLoading(false);
-
-
-
   }
 }

@@ -18,8 +18,8 @@ class ProductDetails extends StatelessWidget {
   ProductDetails({this.product, this.person});
 
   FavoritesController _favoritesController = Get.put(FavoritesController());
-  UserController _userController = Get.put(UserController());
   CartController _cartController = Get.put(CartController());
+  UserController _userController=Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +56,10 @@ class ProductDetails extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+              product.quantity>0?
               _cartController.onPressedOrderButton.value
                   ? quantityCounter()
-                  : orderButton(),
+                  : orderButton():Text(''),
               _cartController.onPressedOrderButton.value
                   ? TextButton(
                       onPressed: () {
@@ -201,8 +202,16 @@ class ProductDetails extends StatelessWidget {
   }
 
   Widget textOfProductPrice() {
-    return Text(
+    return product.quantity>0?Text(
       '${priceChangeFormat(product.price)}  ' + 'toman'.tr,
+      style: TextStyle(
+        fontFamily: 'FontFa',
+        fontSize: 24,
+        color: Button_RED_COLOR,
+        fontWeight: FontWeight.bold,
+      ),
+    ):Text(
+      'price_unknown'.tr,
       style: TextStyle(
         fontFamily: 'FontFa',
         fontSize: 24,
@@ -242,7 +251,15 @@ class ProductDetails extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: textOfQuantity(),
+        child: product.quantity>0?textOfQuantity():Text(
+          'this_product_is_not_available_in_stock'.tr,
+          style: TextStyle(
+            fontFamily: 'FontFa',
+            fontSize: 18,
+            color: Button_RED_COLOR,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
@@ -361,9 +378,9 @@ class ProductDetails extends StatelessWidget {
   }
 
   Widget imageLoading(BuildContext context) {
-    return Image.network(
-      // _userController.fromBase64(product.picture),
-      product.picture,
+    return Image.memory(
+      _userController.fromBase64(product.picture),
+      // product.picture,
       fit: BoxFit.fill,
       height: MediaQuery.of(context).size.height * 0.35,
       width: double.infinity,

@@ -11,6 +11,7 @@ class ProductController extends GetxController {
   double minPrice = double.infinity;
   double maxPrice = 0;
   Rx<RangeValues> rangePrice;
+  RxBool isProductAvailable=true.obs;
 
   ProductRepository _productRepository = ProductRepository();
   List<Product> allProduct = [];

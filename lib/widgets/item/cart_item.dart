@@ -48,9 +48,9 @@ class CartItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'available_in_stock'.tr,
+                'number_of_orders'.tr+': ${purchaseHistory.count}',
                 style: TextStyle(
-                    fontFamily: 'FontFa', fontSize: 16, color: Colors.green),
+                    fontFamily: 'FontFa', fontSize: 16, color: LABLE_TEXTFORM_COLOR),
               ),
               cancelPurchase(),
               productPrice(),
@@ -101,11 +101,7 @@ class CartItem extends StatelessWidget {
         productTitle(),
         sizedBoxHeight_15(),
         productWeight(),
-        Text(
-          'number_of_orders'.tr+': ${purchaseHistory.count}',
-          style: TextStyle(
-              fontFamily: 'FontFa', fontSize: 16, color: LABLE_TEXTFORM_COLOR),
-        ),
+
       ],
     );
   }
@@ -142,9 +138,9 @@ class CartItem extends StatelessWidget {
   Widget productImage() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      child: Image.network(
-        // _userController.fromBase64(product.picture),
-        product.picture,
+      child: Image.memory(
+        _userController.fromBase64(product.picture),
+        // product.picture,
         fit: BoxFit.fill,
         height: 100,
         width: 100,

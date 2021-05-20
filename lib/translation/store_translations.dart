@@ -124,6 +124,9 @@ class StoreTraslation{
       "the_amount_payable": "The amount payable",
       "add_to_cart": "Add to cart",
       "number_of_orders": "Number of orders",
+      "this_product_is_not_available_in_stock": "This product is not available in stock",
+      "price_unknown": "Price unknown",
+      "unsuccess_purchase": "Unsuccess purchase",
 
     };
     static const fa_IR={
@@ -242,6 +245,9 @@ class StoreTraslation{
       "the_amount_payable": "مبلغ قابل پرداخت",
       "add_to_cart": "افزودن به سبد خرید",
       "number_of_orders": "تعداد سفارش",
+      "this_product_is_not_available_in_stock": "محصول در انبار موجود نمی باشد",
+      "price_unknown": "قیمت نامعلوم",
+      "unsuccess_purchase": "خرید ناموفق",
 };
 
 }
