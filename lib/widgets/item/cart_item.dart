@@ -79,7 +79,7 @@ class CartItem extends StatelessWidget {
       style: TextStyle(
           fontFamily: 'MainFa',
           fontSize: 21,
-          color: Button_RED_COLOR,
+          color: BUTTON_RED_COLOR,
           fontWeight: FontWeight.bold),
     );
   }

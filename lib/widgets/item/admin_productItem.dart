@@ -5,6 +5,7 @@ import 'package:medicinalplants_app/controller/admin/product/admin_productContro
 import 'package:medicinalplants_app/controller/user/user_controller.dart';
 import 'package:medicinalplants_app/data/model/product/product.dart';
 import 'package:medicinalplants_app/util/constant.dart';
+import 'package:medicinalplants_app/view/admin/product_edit/product_edit.dart';
 
 class AdminProductItem extends StatelessWidget {
   AdminProductController _adminProductController =
@@ -16,7 +17,7 @@ class AdminProductItem extends StatelessWidget {
     return  Padding(
       padding: const EdgeInsets.only(top:8.0,bottom: 8),
       child: GestureDetector(
-
+        onTap: (){Get.to(()=>ProductEdit(product: product,));},
         child: Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height*0.3,

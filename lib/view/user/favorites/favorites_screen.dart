@@ -35,7 +35,7 @@ class FavoritesScreen extends StatelessWidget {
         child: Text(
           'your_favorites_list_is_empty'.tr,
           style: TextStyle(
-              fontFamily: 'FontFa', color: Button_RED_COLOR, fontSize: 16),
+              fontFamily: 'FontFa', color: BUTTON_RED_COLOR, fontSize: 16),
         ),
       ):
        Container(

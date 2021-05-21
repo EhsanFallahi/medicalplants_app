@@ -28,7 +28,7 @@ class MyBottomSheet extends StatelessWidget {
                  _productController.filterSearch();
                },
                style: ElevatedButton.styleFrom(
-                 primary: Button_RED_COLOR, // background
+                 primary: BUTTON_RED_COLOR, // background
                  onPrimary: Colors.white, // foreground
                ),
                icon: Icon(Icons.saved_search),

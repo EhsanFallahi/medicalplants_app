@@ -13,7 +13,7 @@ class ChangePasswordButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Button_RED_COLOR, // background
+          primary: BUTTON_RED_COLOR, // background
           onPrimary: Colors.white, // foreground
         ),
         onPressed: () {

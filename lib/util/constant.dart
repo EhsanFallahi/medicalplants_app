@@ -7,7 +7,7 @@ const PADDING_TEXTFORFIELD = EdgeInsets.only(left: 15, right: 15, top: 15);
 const FILL_TEXTFORM_COLOR = Colors.black12;
 const INPUT_TEXTFORM_COLOR = Colors.black87;
 const LABLE_TEXTFORM_COLOR = Colors.black45;
-const Button_RED_COLOR = Color(0xff8f0606);
+const BUTTON_RED_COLOR = Color(0xff8f0606);
 
 bool validateStatusCode(int statusCode) =>
     statusCode.toString().startsWith('20');

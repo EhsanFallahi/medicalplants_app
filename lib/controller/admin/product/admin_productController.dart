@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
@@ -14,6 +13,14 @@ class AdminProductController extends GetxController{
   RxBool isLoading=false.obs;
   Person person;
   List<Product>allProducts=[];
+
+  var titleController = TextEditingController();
+  var descriptionController = TextEditingController();
+  var priceController = TextEditingController();
+  var quantityController = TextEditingController();
+  var weightController = TextEditingController();
+  var tagController = TextEditingController();
+  GlobalKey<FormState> formKeyEditProduct = GlobalKey();
 
   @override
   void onInit() {

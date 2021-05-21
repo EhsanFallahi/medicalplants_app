@@ -95,7 +95,7 @@ class MainDashboard extends StatelessWidget {
           : Text(
               'no_result_found'.tr,
               style: TextStyle(
-                  fontFamily: 'FontFa', color: Button_RED_COLOR, fontSize: 16),
+                  fontFamily: 'FontFa', color: BUTTON_RED_COLOR, fontSize: 16),
             ),
     );
   }

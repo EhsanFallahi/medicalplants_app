@@ -77,7 +77,7 @@ class ProductDetails extends StatelessWidget {
                         'add_to_cart'.tr,
                         style: TextStyle(
                             fontFamily: 'MainFont',
-                            color: Button_RED_COLOR,
+                            color: BUTTON_RED_COLOR,
                             fontWeight: FontWeight.bold),
                       ),
                     )
@@ -124,7 +124,7 @@ class ProductDetails extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(
                         Icons.delete_forever_rounded,
-                        color: Button_RED_COLOR,
+                        color: BUTTON_RED_COLOR,
                       ),
                       onPressed: () {
                         _cartController.onPressedOrderButton(false);
@@ -175,7 +175,7 @@ class ProductDetails extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             primary: _cartController.isOrdered.value
                 ? Colors.green
-                : Button_RED_COLOR, // background
+                : BUTTON_RED_COLOR, // background
             onPrimary: Colors.white, // foreground
           ),
           onPressed: () {
@@ -207,7 +207,7 @@ class ProductDetails extends StatelessWidget {
       style: TextStyle(
         fontFamily: 'FontFa',
         fontSize: 24,
-        color: Button_RED_COLOR,
+        color: BUTTON_RED_COLOR,
         fontWeight: FontWeight.bold,
       ),
     ):Text(
@@ -215,7 +215,7 @@ class ProductDetails extends StatelessWidget {
       style: TextStyle(
         fontFamily: 'FontFa',
         fontSize: 24,
-        color: Button_RED_COLOR,
+        color: BUTTON_RED_COLOR,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -256,7 +256,7 @@ class ProductDetails extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'FontFa',
             fontSize: 18,
-            color: Button_RED_COLOR,
+            color: BUTTON_RED_COLOR,
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/util/constant.dart';
+import 'package:medicinalplants_app/view/admin/add_product/add_product.dart';
+import 'package:medicinalplants_app/view/admin/manager/admin_manager.dart';
 import 'package:medicinalplants_app/view/admin/products/admin_products.dart';
 import 'package:medicinalplants_app/view/user/login/login_screen.dart';
 
@@ -39,8 +41,8 @@ class AdminDashboard extends StatelessWidget {
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             Column(
               children: [
-                createNewDashboardpanel((){},Icons.supervisor_account_rounded,'admin'),
-                createNewDashboardpanel((){},Icons.add_circle_outline,'add_product'),
+                createNewDashboardpanel((){Get.to(()=>AdminManager());},Icons.supervisor_account_rounded,'admin'),
+                createNewDashboardpanel((){Get.to(()=>AddProduct());},Icons.add_circle_outline,'add_product'),
               ],
             ),
             Column(

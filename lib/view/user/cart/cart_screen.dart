@@ -39,7 +39,7 @@ class CartScreen extends StatelessWidget {
                     'your_cart_list_is_empty'.tr,
                     style: TextStyle(
                         fontFamily: 'FontFa',
-                        color: Button_RED_COLOR,
+                        color: BUTTON_RED_COLOR,
                         fontSize: 16),
                   ),
                 )
@@ -89,7 +89,7 @@ class CartScreen extends StatelessWidget {
                       child: FittedBox(
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            primary: Button_RED_COLOR, // background
+                            primary: BUTTON_RED_COLOR, // background
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () {_cartController.completePurchaseProcess();},

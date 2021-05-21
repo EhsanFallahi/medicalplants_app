@@ -35,7 +35,7 @@ class ChangeLanguage extends StatelessWidget {
       padding: 4.0,
       toggleSize: 15.0,
       borderRadius: 10.0,
-      activeColor: Button_RED_COLOR,
+      activeColor: BUTTON_RED_COLOR,
       value: _userController.isPersianLanguage.value,
       onToggle: (value) {
         _userController.isPersianLanguage.value =
