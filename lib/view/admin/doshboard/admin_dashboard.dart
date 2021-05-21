@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/util/constant.dart';
+import 'package:medicinalplants_app/view/admin/products/admin_products.dart';
 import 'package:medicinalplants_app/view/user/login/login_screen.dart';
 
 class AdminDashboard extends StatelessWidget {
+  Person person;
+  AdminDashboard({this.person});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +45,7 @@ class AdminDashboard extends StatelessWidget {
             ),
             Column(
               children: [
-                createNewDashboardpanel((){},Icons.shopping_basket_rounded,'products'),
+                createNewDashboardpanel((){Get.to(()=>AdminProducts(person: person,));},Icons.shopping_basket_rounded,'products'),
                 createNewDashboardpanel((){Get.off(()=>LoginScreen());},Icons.exit_to_app_rounded,'exit'),
               ],
             ),

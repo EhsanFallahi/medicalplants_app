@@ -30,7 +30,7 @@ class FavoritesScreen extends StatelessWidget {
   Widget containerOfListView(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: _favoritesController.allFavoritesProduct.isEmpty?Align(
+      child: _favoritesController.isFavoritesEmpty.value?Align(
         alignment: Alignment.topCenter,
         child: Text(
           'your_favorites_list_is_empty'.tr,

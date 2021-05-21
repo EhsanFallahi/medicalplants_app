@@ -52,16 +52,23 @@ class RegisterScreen extends StatelessWidget {
   }
 
   Widget loginOutlineButton() {
-    return OutlineButton(
-      onPressed: () {
-        validateInformation() == true
-            ? _loginController.registerPerson()
-            : showSnackBar('input_error',
-            'please_enter_the_information_correctly', Colors.redAccent);
-      },
-      child: loginText(),
-      borderSide: loginBtnBorderSide(),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    return Obx(
+      () => _loginController.isLoading.value
+          ? CircularProgressIndicator()
+          : OutlineButton(
+              onPressed: () {
+                validateInformation() == true
+                    ? _loginController.registerPerson()
+                    : showSnackBar(
+                        'input_error',
+                        'please_enter_the_information_correctly',
+                        Colors.redAccent);
+              },
+              child: loginText(),
+              borderSide: loginBtnBorderSide(),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
     );
   }
 

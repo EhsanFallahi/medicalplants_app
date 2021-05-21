@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/data/repository/person/person_repository.dart';
 import 'package:medicinalplants_app/util/constant.dart';
+import 'package:medicinalplants_app/view/admin/doshboard/admin_dashboard.dart';
 import 'package:medicinalplants_app/view/user/dashboard/main_dashboard.dart';
 
 class LoginController extends GetxController {
@@ -31,8 +32,9 @@ class LoginController extends GetxController {
       } else {
         showSnackBar('network', 'network_error', Colors.redAccent);
       }
+      isLoading(false);
     });
-    isLoading(false);
+
   }
 
   void loginPerson() {
@@ -46,8 +48,9 @@ class LoginController extends GetxController {
       } else {
         showSnackBar('network', 'network_error', Colors.redAccent);
       }
+      isLoading(false);
     });
-    isLoading(false);
+
   }
 
   bool isEqualPasswordAndConfirmPassword() =>
@@ -64,6 +67,7 @@ class LoginController extends GetxController {
   }
 
   void addPerson() {
+    isLoading(true);
     person = Person(
         fullName: fullNameController.text.trim(),
         userName: userNameController.text.trim(),
@@ -74,10 +78,12 @@ class LoginController extends GetxController {
         person = Person.fromJson(value.data);
         clearController();
         showSnackBar('register', 'you_are_registered', Colors.green);
-        Get.off(()=>MainDashboard(person: person,),arguments: person);
+        Get.offAll(()=>MainDashboard(person: person,),arguments: person);
+        print('you are register');
       } else {
         showSnackBar('network', 'network_error', Colors.redAccent);
       }
+      isLoading(false);
     });
   }
 
@@ -105,6 +111,6 @@ class LoginController extends GetxController {
 
   void loginAdminAction() {
     clearController();
-    print('welcome admin');
+    Get.off(()=>AdminDashboard(person: person,),arguments: person);
   }
 }

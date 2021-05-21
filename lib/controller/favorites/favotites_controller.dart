@@ -19,6 +19,7 @@ class FavoritesController extends GetxController {
   bool isNotAvalableUser;
   RxBool isLoading = false.obs;
   RxBool isFavorites = false.obs;
+  RxBool isFavoritesEmpty = true.obs;
 
   @override
   void onInit() {
@@ -47,10 +48,16 @@ class FavoritesController extends GetxController {
     _favoritesRepository.getAllFavorites().then((value) {
       if (validateStatusCode(value.statusCode)) {
         List<dynamic> response = value.data as List<dynamic>;
-        response.forEach((element) {
-          allFavorites.add(Favorites.fromJson(element));
-        });
-        getFavoritesForCurrentUser();
+        if (response.isEmpty) {
+          isFavoritesEmpty(true);
+          isLoading(false);
+        } else {
+          response.forEach((element) {
+            allFavorites.add(Favorites.fromJson(element));
+          });
+          isFavoritesEmpty(false);
+          getFavoritesForCurrentUser();
+        }
       } else {
         print('network error');
       }
@@ -59,13 +66,20 @@ class FavoritesController extends GetxController {
 
   getFavoritesForCurrentUser() {
     allFavorites.removeWhere((element) => element.userId != person.id);
+    print('all favorites user is: ${allFavorites.length}');
     if (allFavorites.isEmpty) {
       isLoading(false);
+      isFavoritesEmpty(true);
       return;
+    }else if(allFavorites.first.productId.isEmpty){
+      isLoading(false);
+      isFavoritesEmpty(true);
+    }else{
+      getUserProductId();
+      getIsFavorites();
+      getFavoriteProducts();
     }
-    getUserProductId();
-    getIsFavorites();
-    getFavoriteProducts();
+
   }
 
   void getUserProductId() {

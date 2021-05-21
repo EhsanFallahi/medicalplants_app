@@ -66,16 +66,22 @@ class LoginScreen extends StatelessWidget {
   }
 
   Widget outlineButton() {
-    return OutlineButton(
-      onPressed: () {
-        validateInformation() == true
-            ? _loginController.loginPerson()
-            : showSnackBar('input_error',
-                'please_enter_the_information_correctly', Colors.redAccent);
-      },
-      child: loginText(),
-      borderSide: borderSideOfOutlineBtn(),
-      shape: roundedRectangleBorder(),
+    return Obx(
+      () => _loginController.isLoading.value
+          ? CircularProgressIndicator()
+          : OutlineButton(
+              onPressed: () {
+                validateInformation() == true
+                    ? _loginController.loginPerson()
+                    : showSnackBar(
+                        'input_error',
+                        'please_enter_the_information_correctly',
+                        Colors.redAccent);
+              },
+              child: loginText(),
+              borderSide: borderSideOfOutlineBtn(),
+              shape: roundedRectangleBorder(),
+            ),
     );
   }
 
