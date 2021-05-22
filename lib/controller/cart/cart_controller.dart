@@ -1,3 +1,4 @@
+import 'package:dio/src/response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicinalplants_app/controller/product/product_controller.dart';
@@ -20,6 +21,7 @@ class CartController extends GetxController {
   RxBool isOrdered = false.obs;
   RxBool onPressedOrderButton = false.obs;
   RxBool isDeleteProductPurchase = true.obs;
+  RxBool isFinishPurchase = false.obs;
 
   RxInt purchaseQuantity = 1.obs;
   RxDouble totalPurchase = 0.0.obs;
@@ -31,25 +33,18 @@ class CartController extends GetxController {
 
   @override
   void onInit() {
-    print('oninit cartController');
     if (Get.arguments.runtimeType.toString() == 'List<Object>') {
       person = Get.arguments[0] as Person;
       product = Get.arguments[1] as Product;
-      // if(product.quantity==0||product.quantity==null){
-      //   isProductAvailable(false);
-      // }
     } else {
       person = Get.arguments;
     }
-
     getAllCarts();
     super.onInit();
   }
 
   void getAllCarts() {
-    allCarts = [];
-    allProductIdInCart = [];
-    allProductInCart = [];
+    resetAllList();
     isLoading(true);
     _cartRepository.getAllCarts().then((value) {
       if (validateStatusCode(value.statusCode)) {
@@ -67,6 +62,12 @@ class CartController extends GetxController {
     isLoading(false);
   }
 
+  void resetAllList() {
+    allCarts = [];
+    allProductIdInCart = [];
+    allProductInCart = [];
+  }
+
   getCurrentUserCart() {
     allCarts.removeWhere((element) => element.userId != person.id);
     if (allCarts.isEmpty) {
@@ -82,7 +83,6 @@ class CartController extends GetxController {
     return allCarts.forEach((cart) {
       cart.purchaseHistory.forEach((element) {
         allProductIdInCart.add(element.productId);
-        print('cart product id is :${element.productId}');
       });
     });
   }
@@ -97,8 +97,6 @@ class CartController extends GetxController {
           print('network error');
         }
       });
-      print('all cart product is: ${allProductInCart.length}');
-
       if (allProductIdInCart.length == allProductInCart.length) {
         isLoading(false);
         getTotalPurchase();
@@ -110,20 +108,7 @@ class CartController extends GetxController {
     isLoading(true);
     allCarts.removeWhere((element) => element.userId != person.id);
     if (allCarts.isNotEmpty) {
-      _cartRepository.getCartByUserId(person.id).then((value) {
-        if (validateStatusCode(value.statusCode)) {
-          List<dynamic> response = value.data as List<dynamic>;
-          Cart tempCart = Cart.fromJson(response[0]);
-          tempCart.purchaseHistory.add(PurchaseHistory(
-              productId: product.id, count: cart.purchaseHistory[0].count));
-          currentCartUpdate(tempCart);
-          isOrdered(true);
-          onPressedOrderButton(false);
-          Get.to(() => CartScreen());
-        } else {
-          print('network error');
-        }
-      });
+      getAndUpdateCartOfCurrentUser(person, product, cart);
     } else {
       _cartRepository.addToCart(cart).then((value) {
         if (validateStatusCode(value.statusCode)) {
@@ -141,11 +126,31 @@ class CartController extends GetxController {
     isLoading(false);
   }
 
+  Future<dynamic> getAndUpdateCartOfCurrentUser(
+      Person person, Product product, Cart cart) {
+    return _cartRepository.getCartByUserId(person.id).then((value) {
+      if (validateStatusCode(value.statusCode)) {
+        List<dynamic> response = value.data as List<dynamic>;
+        Cart tempCart = Cart.fromJson(response[0]);
+        tempCart.purchaseHistory.add(PurchaseHistory(
+            productId: product.id, count: cart.purchaseHistory[0].count));
+        updateCart(tempCart);
+      } else {
+        print('network error');
+      }
+    });
+  }
+
+  void updateCart(Cart tempCart) {
+    currentCartUpdate(tempCart);
+    isOrdered(true);
+    onPressedOrderButton(false);
+    Get.to(() => CartScreen());
+  }
+
   void currentCartUpdate(Cart cart) {
-    // cart=Cart(id: cart.id,userId: person)
     _cartRepository.updateCart(cart).then((value) {
       if (validateStatusCode(value.statusCode)) {
-        print('cart updated');
         getAllCarts();
       } else {
         print('network error');
@@ -155,19 +160,20 @@ class CartController extends GetxController {
 
   void deleteFromCart(int productId) {
     isLoading(true);
-    _cartRepository.getCartByUserId(person.id).then((value) {
+    getAndDeleteCart(productId);
+    print('product deleted from cart');
+    isLoading(false);
+  }
+
+  Future<dynamic> getAndDeleteCart(int productId) {
+    return _cartRepository.getCartByUserId(person.id).then((value) {
       if (validateStatusCode(value.statusCode)) {
         List<dynamic> response = value.data as List<dynamic>;
         Cart tempCart = Cart.fromJson(response[0]);
         tempCart.purchaseHistory
             .removeWhere((element) => element.productId == productId);
         if (tempCart.purchaseHistory.length == 0) {
-          _cartRepository.deleteFromCart(tempCart.id).then((value) {
-            if (validateStatusCode(value.statusCode)) {
-              print('deleted your cart');
-              getAllCarts();
-            }
-          });
+          deleteCart(tempCart);
         } else {
           currentCartUpdate(tempCart);
         }
@@ -175,8 +181,15 @@ class CartController extends GetxController {
         print('network error');
       }
     });
-    print('product deleted from cart');
-    isLoading(false);
+  }
+
+  Future<dynamic> deleteCart(Cart tempCart) {
+    return _cartRepository.deleteFromCart(tempCart.id).then((value) {
+      if (validateStatusCode(value.statusCode)) {
+        print('deleted your cart');
+        getAllCarts();
+      }
+    });
   }
 
   void getIsOrdered() {
@@ -190,8 +203,7 @@ class CartController extends GetxController {
   incraseQuantity(Product product) {
     isDeleteProductPurchase(false);
     if (purchaseQuantity.value >= product.quantity) {
-      isDeleteProductPurchase(true);
-      print('puchase is full');
+      // isDeleteProductPurchase(true);
       return 1;
     }
     return purchaseQuantity.value++;
@@ -214,73 +226,86 @@ class CartController extends GetxController {
             cart.purchaseHistory[i].count * allProductInCart[i].price;
       }
     });
-    print('total purchase is $tempTotalPurchase');
     totalPurchase.value = tempTotalPurchase;
   }
 
   void completePurchaseProcess() {
     isLoading(true);
     allCarts.forEach((cart) async {
-      for (var i = 0; i < cart.purchaseHistory.length; i++) {
-        int productId = cart.purchaseHistory[i].productId;
-        await _cartRepository.getDesiredProduct(productId).then((value) {
-          if (validateStatusCode(value.statusCode)) {
-            Product tempProduct = Product.fromJson(value.data);
-            if (tempProduct.quantity == 0) {
-              print('not apply purchase!');
-              Future.delayed(Duration(seconds: 2),(){
-                  showSnackBar('unsuccess_purchase'.tr,
-                    'this_product_is_not_available_in_stock'.tr, Colors.green);
-
-              });
-              return;
-            }
-            tempProduct.quantity -= cart.purchaseHistory[i].count;
-            _productRepository.updateProduct(Product(
-              id: tempProduct.id,
-              title: tempProduct.title,
-              description: tempProduct.description,
-              picture: tempProduct.picture,
-              price: tempProduct.price,
-              weight: tempProduct.weight,
-              tagsId: tempProduct.tagsId,
-              isDisplay: tempProduct.isDisplay,
-              quantity: tempProduct.quantity,
-            ));
-          } else {
-            print('network error');
-          }
-        });
-      }
+      await getAndUpdateProductOfCart(cart);
       deleteAllProductsInCart();
     });
     isLoading(false);
   }
 
-  void deleteAllProductsInCart() {
-    isLoading(true);
-    print('all cart lentght1 is:${allCarts.length}');
-    allCarts.forEach((cart) async {
-      await _cartRepository.deleteFromCart(cart.id).then((value) {
+  Future getAndUpdateProductOfCart(Cart cart) async {
+    for (var i = 0; i < cart.purchaseHistory.length; i++) {
+      int productId = cart.purchaseHistory[i].productId;
+      await _cartRepository.getDesiredProduct(productId).then((value) {
         if (validateStatusCode(value.statusCode)) {
-          print('person cart is deleted');
-          getAllCarts();
-          print('all cart lentght2 is:${allCarts.length}');
+          Product tempProduct = Product.fromJson(value.data);
+          if (tempProduct.quantity == 0) {
+            // handleEmptyQuantity();
+            isFinishPurchase(false);
+          } else {
+            tempProduct.quantity -= cart.purchaseHistory[i].count;
+            updateProduct(tempProduct);
+            isFinishPurchase(true);
+          }
         } else {
           print('network error');
         }
       });
-      if (allCarts.length == 0) {
-        _productController.getAllProducts();
-        isOrdered(false);
-        onPressedOrderButton(false);
-        Get.off(
-            () => MainDashboard(
-                  person: person,
-                ),
-            arguments: person);
-      }
+    }
+  }
+
+  updateProduct(Product tempProduct) {
+    return _productRepository.updateProduct(Product(
+      id: tempProduct.id,
+      title: tempProduct.title,
+      description: tempProduct.description,
+      picture: tempProduct.picture,
+      price: tempProduct.price,
+      weight: tempProduct.weight,
+      tagsId: tempProduct.tagsId,
+      isDisplay: tempProduct.isDisplay,
+      quantity: tempProduct.quantity,
+    ));
+  }
+
+  void deleteAllProductsInCart() {
+    isLoading(true);
+    allCarts.forEach((cart) async {
+      await deleteCarts(cart);
+      finishPurchaseHandel();
     });
     isLoading(false);
+  }
+
+  void finishPurchaseHandel() {
+    if (allCarts.length == 0) {
+      _productController.getAllProducts();
+      isOrdered(false);
+      onPressedOrderButton(false);
+      Get.off(
+          () => MainDashboard(
+                person: person,
+              ),
+          arguments: person);
+      isFinishPurchase.value
+          ? showSnackBar('', 'thanks_for_your_shopping'.tr, Colors.green)
+          : showSnackBar('unsuccess_purchase'.tr,
+              'this_product_is_not_available_in_stock'.tr, Colors.green);
+    }
+  }
+
+  Future<dynamic> deleteCarts(Cart cart) async {
+    return await _cartRepository.deleteFromCart(cart.id).then((value) {
+      if (validateStatusCode(value.statusCode)) {
+        getAllCarts();
+      } else {
+        print('network error');
+      }
+    });
   }
 }

@@ -117,13 +117,21 @@ class FavoritesItem extends StatelessWidget {
   }
 
   Widget productPrice() {
-    return Text(
+    return product.quantity>0?Text(
       '${priceChangeFormat(product.price)}  ' + 'toman'.tr,
       style: TextStyle(
           fontFamily: 'MainFa',
           fontSize: 21,
           color: BUTTON_RED_COLOR,
           fontWeight: FontWeight.bold),
+    ):Text(
+      'price_unknown'.tr,
+      style: TextStyle(
+        fontFamily: 'FontFa',
+        fontSize: 20,
+        color: BUTTON_RED_COLOR,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 
