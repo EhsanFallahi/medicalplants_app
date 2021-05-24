@@ -4,6 +4,7 @@ import 'package:medicinalplants_app/controller/admin/product_edit/product_editCo
 import 'package:medicinalplants_app/data/model/product/product.dart';
 import 'package:medicinalplants_app/util/constant.dart';
 import 'package:medicinalplants_app/widgets/cancel_button_appBar.dart';
+import 'package:medicinalplants_app/widgets/quantity_counter.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/description_textFormField.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/price_textFormField.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/title_textFormField.dart';
@@ -31,104 +32,139 @@ class ProductEdit extends StatelessWidget {
       leading: buttonCancelAppBar(),
       actions: [saveButtonAppBar()],
     );
+    return mainBody(appBar, context);
+  }
+
+  Widget mainBody(AppBar appBar, BuildContext context) {
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.3,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.white,
-                  image: DecorationImage(
-                      image: MemoryImage(fromBase64(product.picture)),
-                      fit: BoxFit.fill,
-                      colorFilter: product.isDisplay
-                          ? ColorFilter.mode(
-                              Colors.black.withOpacity(1), BlendMode.dstATop)
-                          : ColorFilter.mode(Colors.black.withOpacity(0.2),
-                              BlendMode.dstATop))),
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 70,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white.withOpacity(0.8)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.delete_forever_rounded,
-                                color: BUTTON_RED_COLOR,
-                                size: 48,
-                              ),
-                              onPressed: () {
-                                _productEditController
-                                    .deleteProduct(product.id);
-                                Get.back();
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Obx(
-                              () => IconButton(
-                                  icon: _productEditController
-                                          .isDisplayProduct.value
-                                      ? Icon(
-                                          Icons.visibility_rounded,
-                                          color: Colors.lightBlue,
-                                          size: 48,
-                                        )
-                                      : Icon(Icons.visibility_off_rounded,
-                                          color: Colors.lightBlue, size: 48),
-                                  onPressed: () {
-                                    _productEditController
-                                            .isDisplayProduct.value =
-                                        !_productEditController
-                                            .isDisplayProduct.value;
-                                  }),
-                            ),
-                          ),
-                          Expanded(flex: 2, child: quantityCounter())
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+            containerOfdeleteAndCounterAndVisibilityActions(context),
             divider(),
-            Form(
-              key: _productEditController.formKeyEditProduct,
-              child: Column(
-                children: [
-                  TitleTextFormField(
-                      controller: _productEditController.titleController),
-                  DescriptionTextFormField(
-                    controller: _productEditController.descriptionController,
-                  ),
-                  WeightTextFormField(
-                    controller: _productEditController.weightController,
-                  ),
-                  PriceTextFormField(
-                    controller: _productEditController.priceController,
-                  )
-                ],
-              ),
-            ),
+            allForms(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget allForms() {
+    return Form(
+      key: _productEditController.formKeyEditProduct,
+      child: Column(
+        children: [
+          titleTextFormField(),
+          descriptionTextFormField(),
+          weightTextFormField(),
+          priceTextFormField()
+        ],
+      ),
+    );
+  }
+
+  Widget priceTextFormField() {
+    return PriceTextFormField(
+      controller: _productEditController.priceController,
+    );
+  }
+
+  Widget weightTextFormField() {
+    return WeightTextFormField(
+      controller: _productEditController.weightController,
+    );
+  }
+
+  Widget descriptionTextFormField() {
+    return DescriptionTextFormField(
+      controller: _productEditController.descriptionController,
+    );
+  }
+
+  Widget titleTextFormField() {
+    return TitleTextFormField(
+        controller: _productEditController.titleController);
+  }
+
+  Widget containerOfdeleteAndCounterAndVisibilityActions(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.3,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+          image: decorationImage()),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [containerOfItems()],
+      ),
+    );
+  }
+
+  DecorationImage decorationImage() {
+    return DecorationImage(
+        image: MemoryImage(fromBase64(product.picture)),
+        fit: BoxFit.fill,
+        colorFilter: product.isDisplay
+            ? ColorFilter.mode(Colors.black.withOpacity(1), BlendMode.dstATop)
+            : ColorFilter.mode(
+                Colors.black.withOpacity(0.2), BlendMode.dstATop));
+  }
+
+  Widget containerOfItems() {
+    return Container(
+      width: double.infinity,
+      height: 70,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white.withOpacity(0.8)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [deleteItem(), visibilityItem(), quantityCounterItem()],
+        ),
+      ),
+    );
+  }
+
+  Widget quantityCounterItem() => Expanded(flex: 2, child: quantityCounter());
+
+  Widget visibilityItem() {
+    return Expanded(
+      flex: 1,
+      child: Obx(
+        () => IconButton(
+            icon: _productEditController.isDisplayProduct.value
+                ? Icon(
+                    Icons.visibility_rounded,
+                    color: Colors.lightBlue,
+                    size: 48,
+                  )
+                : Icon(Icons.visibility_off_rounded,
+                    color: Colors.lightBlue, size: 48),
+            onPressed: () {
+              _productEditController.isDisplayProduct.value =
+                  !_productEditController.isDisplayProduct.value;
+            }),
+      ),
+    );
+  }
+
+  Widget deleteItem() {
+    return Expanded(
+      flex: 1,
+      child: IconButton(
+        icon: Icon(
+          Icons.delete_forever_rounded,
+          color: BUTTON_RED_COLOR,
+          size: 48,
+        ),
+        onPressed: () {
+          _productEditController.deleteProduct(product.id);
+          Get.back();
+        },
       ),
     );
   }
@@ -145,45 +181,7 @@ class ProductEdit extends StatelessWidget {
   }
 
   Widget quantityCounter() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: 110,
-        height: 45,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: LABLE_TEXTFORM_COLOR, width: 2),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                _productEditController.incraseQuantityCounter(product);
-              },
-              color: INPUT_TEXTFORM_COLOR,
-            ),
-            Obx(
-              () => Text(
-                _productEditController.quantityCounter.value.toString(),
-                style: TextStyle(
-                    color: INPUT_TEXTFORM_COLOR,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 21),
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.remove),
-              onPressed: () {
-                _productEditController.decraseQuantityCounter();
-              },
-              color: INPUT_TEXTFORM_COLOR,
-            )
-          ],
-        ),
-      ),
-    );
+    return QuantityCounter();
   }
 
   Widget buttonCancelAppBar() {

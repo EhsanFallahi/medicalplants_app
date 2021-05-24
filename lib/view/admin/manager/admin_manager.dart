@@ -26,35 +26,59 @@ class AdminManager extends StatelessWidget {
               fontSize: 24,
               color: INPUT_TEXTFORM_COLOR)),
     );
+    return mainBody(appBar, context);
+  }
+
+  Widget mainBody(AppBar appBar, BuildContext context) {
     return Scaffold(
       appBar: appBar,
       body: Scaffold(
         body: Form(
           key: _adminController.formKeyRegisterAdmin,
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                FullNameTextFormField(
-                  controller: _adminController.fullNameController,
-                ),
-                UserNameTextFormField(
-                  controller: _adminController.userController,
-                ),
-                PasswordTextFormField(
-                  controller: _adminController.passwordController,
-                  changeDisplayPassword: _adminController.changeDisplayPassword,
-                ),
-                addAdminItem(),
-                SizedBox(
-                  height: 12,
-                ),
-                AdminListText(),
-                listViewItem(context)
-              ],
-            ),
+            child: mainColumn(context),
           ),
         ),
       ),
+    );
+  }
+
+  Widget mainColumn(BuildContext context) {
+    return Column(
+      children: [
+        fullNameTextFormField(),
+        userNameTextFormField(),
+        passwordTextFormField(),
+        addAdminItem(),
+        sizedBoxHeight_12(),
+        AdminListText(),
+        listViewItem(context)
+      ],
+    );
+  }
+
+  Widget sizedBoxHeight_12() {
+    return SizedBox(
+      height: 12,
+    );
+  }
+
+  Widget passwordTextFormField() {
+    return PasswordTextFormField(
+      controller: _adminController.passwordController,
+      changeDisplayPassword: _adminController.changeDisplayPassword,
+    );
+  }
+
+  Widget userNameTextFormField() {
+    return UserNameTextFormField(
+      controller: _adminController.userController,
+    );
+  }
+
+  Widget fullNameTextFormField() {
+    return FullNameTextFormField(
+      controller: _adminController.fullNameController,
     );
   }
 
@@ -117,14 +141,18 @@ class AdminManager extends StatelessWidget {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : ListView.separated(
-              itemCount: _adminController.allAdmins.length,
-              separatorBuilder: (context, index) {
-                return dividerOfListView();
-              },
-              key: UniqueKey(),
-              itemBuilder: (context, i) => containerOfListTile(i),
-            ),
+          : listView(),
+    );
+  }
+
+  Widget listView() {
+    return ListView.separated(
+      itemCount: _adminController.allAdmins.length,
+      separatorBuilder: (context, index) {
+        return dividerOfListView();
+      },
+      key: UniqueKey(),
+      itemBuilder: (context, i) => containerOfListTile(i),
     );
   }
 
@@ -138,7 +166,10 @@ class AdminManager extends StatelessWidget {
     return ListTile(
       title: adminUserName(i),
       trailing: _adminController.allAdmins[i].fullName.contains('ehsanfallahi')
-          ? Icon(Icons.account_box_rounded,color: Colors.green,)
+          ? Icon(
+              Icons.account_box_rounded,
+              color: Colors.green,
+            )
           : deleteIconButton(i),
     );
   }

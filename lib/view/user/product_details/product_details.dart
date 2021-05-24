@@ -181,9 +181,6 @@ class ProductDetails extends StatelessWidget {
           onPressed: () {
             _cartController.isOrdered.value?Get.to(()=>CartScreen()):
             _cartController.onPressedOrderButton(true);
-            // _cartController.addToCart(Cart(userId: person.id, purchaseHistory: [
-            //   PurchaseHistory(productId: product.id, count: 2)
-            // ]),person,product);
           },
           icon: Icon(Icons.add_shopping_cart_rounded),
           label: _cartController.isOrdered.value

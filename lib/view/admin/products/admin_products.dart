@@ -15,35 +15,51 @@ class AdminProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return mainBody(context);
+  }
+
+  Widget mainBody(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Obx(
-            () => _adminProductController.isLoading.value
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : ListView.separated(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    separatorBuilder: (context, index) {
-                      return Divider(
-                        height: 1,
-                        color: LABLE_TEXTFORM_COLOR,
-                      );
-                    },
-                    itemCount: _adminProductController.allProducts.length,
-                    itemBuilder: (_, i) {
-                      return AdminProductItem(
-                        product: _adminProductController.allProducts[i],
-                      );
-                    },
-                  ),
-          ),
-        ),
+        child: mainContainer(context),
       ),
+    );
+  }
+
+  Widget mainContainer(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: Obx(
+        () => _adminProductController.isLoading.value
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : listView(),
+      ),
+    );
+  }
+
+  Widget listView() {
+    return ListView.separated(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      separatorBuilder: (context, index) {
+        return divider();
+      },
+      itemCount: _adminProductController.allProducts.length,
+      itemBuilder: (_, i) {
+        return AdminProductItem(
+          product: _adminProductController.allProducts[i],
+        );
+      },
+    );
+  }
+
+  Widget divider() {
+    return Divider(
+      height: 1,
+      color: LABLE_TEXTFORM_COLOR,
     );
   }
 }

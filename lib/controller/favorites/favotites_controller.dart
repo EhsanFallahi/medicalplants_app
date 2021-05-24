@@ -66,7 +66,6 @@ class FavoritesController extends GetxController {
 
   getFavoritesForCurrentUser() {
     allFavorites.removeWhere((element) => element.userId != person.id);
-    print('all favorites user is: ${allFavorites.length}');
     if (allFavorites.isEmpty) {
       isLoading(false);
       isFavoritesEmpty(true);
