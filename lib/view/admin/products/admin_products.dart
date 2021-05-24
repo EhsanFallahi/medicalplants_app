@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:medicinalplants_app/controller/admin/product/admin_productController.dart';
+import 'package:medicinalplants_app/controller/admin/products/admin_productController.dart';
 import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/util/constant.dart';
 import 'package:medicinalplants_app/widgets/item/admin_productItem.dart';

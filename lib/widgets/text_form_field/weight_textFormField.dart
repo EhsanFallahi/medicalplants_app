@@ -13,7 +13,8 @@ class WeightTextFormField extends StatelessWidget {
         style: TextStyle(color: INPUT_TEXTFORM_COLOR),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: controller,
-        maxLength: 6,
+        keyboardType: TextInputType.number,
+        maxLength: 3,
         validator: (value) {
           if (value.isEmpty) {
             return 'please_enter_some_text'.tr;

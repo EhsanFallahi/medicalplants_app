@@ -7,7 +7,6 @@ import 'package:medicinalplants_app/view/user/dashboard/main_dashboard.dart';
 
 
 class CancelButtonAppBar extends StatelessWidget {
-  UserController _userController = Get.put(UserController());
   Person person;
   CancelButtonAppBar({this.person});
   @override

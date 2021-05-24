@@ -12,23 +12,23 @@ class AdminProductController extends GetxController{
   ProductRepository _productRepository=ProductRepository();
   RxBool isLoading=false.obs;
   Person person;
+  Product product;
   List<Product>allProducts=[];
 
-  var titleController = TextEditingController();
-  var descriptionController = TextEditingController();
-  var priceController = TextEditingController();
-  var quantityController = TextEditingController();
-  var weightController = TextEditingController();
-  var tagController = TextEditingController();
-  GlobalKey<FormState> formKeyEditProduct = GlobalKey();
+
+
 
   @override
   void onInit() {
+    print('get.arguments type is: ${Get.arguments.runtimeType}');
+    product=Get.arguments;
     getAllProduct();
     super.onInit();
   }
 
   void getAllProduct(){
+    print('getAll product');
+    allProducts=[];
     isLoading(true);
     _productRepository.getALlProduct().then((value) {
       if(validateStatusCode(value.statusCode)){
@@ -45,12 +45,6 @@ class AdminProductController extends GetxController{
 
   }
 
-  String toBase64(File file) {
-    return base64Encode(file.readAsBytesSync());
-  }
 
-  Uint8List fromBase64(String base64) {
-    return Base64Decoder().convert(base64);
-  }
 
 }

@@ -1,43 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:medicinalplants_app/controller/admin/admin_manager/admin_controller.dart';
+import 'package:medicinalplants_app/data/model/person/person.dart';
 import 'package:medicinalplants_app/util/constant.dart';
 import 'package:get/get.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/confirm_passwordTxtFormField.dart';
+import 'package:medicinalplants_app/widgets/text_form_field/fullname_txtFormField.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/password_txtFormField.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/username_txtFormField.dart';
+
 class AdminManager extends StatelessWidget {
+  AdminController _adminController = Get.put(AdminController());
+  Person person;
+
+  AdminManager({this.person});
+
   @override
   Widget build(BuildContext context) {
     final appBar = AppBar(
       backgroundColor: Colors.grey,
       centerTitle: true,
       elevation: 0,
-      title: Text('add_product'.tr,
+      title: Text('admin_manager'.tr,
           style: TextStyle(
               fontFamily: 'MainFont',
               fontSize: 24,
               color: INPUT_TEXTFORM_COLOR)),
-      // leading: buttonCancelAppBar(),
-      // actions: [saveButtonAppBar()],
     );
     return Scaffold(
       appBar: appBar,
       body: Scaffold(
-        body:Column(
-          children: [
-            UserNameTextFormField(),
-            PasswordTextFormField(),
-            ConfirmPasswordTextFormField(),
-            addAdminItem(),
-            SizedBox(
-              height: 12,
+        body: Form(
+          key: _adminController.formKeyRegisterAdmin,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                FullNameTextFormField(
+                  controller: _adminController.fullNameController,
+                ),
+                UserNameTextFormField(
+                  controller: _adminController.userController,
+                ),
+                PasswordTextFormField(
+                  controller: _adminController.passwordController,
+                  changeDisplayPassword: _adminController.changeDisplayPassword,
+                ),
+                addAdminItem(),
+                SizedBox(
+                  height: 12,
+                ),
+                AdminListText(),
+                listViewItem(context)
+              ],
             ),
-            AdminListText(),
-            listViewItem(context)
-          ],
+          ),
         ),
       ),
     );
   }
+
   Widget addAdminItem() {
     return SizedBox(
       height: 40,
@@ -48,17 +68,16 @@ class AdminManager extends StatelessWidget {
 
   Widget AddAdminButton() {
     return ElevatedButton(
-      child: Text('add_admin'.tr,),
-
-        // bg_color: SECONDARY_COLOR,
-        // txt_color: WHITE_COLOR,
-        // btn_icon: Icons.group_add_rounded,
+        child: Text(
+          'add_admin'.tr,
+        ),
         onPressed: () {
-          // if (_loginController.formKeyRegisterAdmin.currentState.validate()) {
-          //   _loginController.registerAdmin();
+          if (_adminController.formKeyRegisterAdmin.currentState.validate()) {
+            _adminController.registerAdmin();
           }
-        );
+        });
   }
+
   Widget AdminListText() {
     return Padding(
       padding: const EdgeInsets.all(12),
@@ -71,11 +90,13 @@ class AdminManager extends StatelessWidget {
 
   TextStyle textStyleOfAdminListText() {
     return TextStyle(
+        fontFamily: 'MainFont',
         fontSize: 21,
         color: Colors.black,
         fontWeight: FontWeight.bold,
         letterSpacing: 2);
   }
+
   Widget listViewItem(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
@@ -86,26 +107,24 @@ class AdminManager extends StatelessWidget {
   Widget containerOfAdminListView(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height,
-      child: adminListView(),
+      child: allAdminsView(),
     );
   }
 
-  Widget adminListView() {
-    return
-      // Obx(
-      //     () => _loginController.isLoading.value
-      //     ? Center(
-      //   child: CircularProgressIndicator(),
-      // )
-      //     :
-          ListView.separated(
-        itemCount: 2,
-        separatorBuilder: (context, index) {
-          return dividerOfListView();
-        },
-        key: UniqueKey(),
-        itemBuilder: (context, i) => containerOfListTile(i),
-      // ),
+  Widget allAdminsView() {
+    return Obx(
+      () => _adminController.isLoading.value
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView.separated(
+              itemCount: _adminController.allAdmins.length,
+              separatorBuilder: (context, index) {
+                return dividerOfListView();
+              },
+              key: UniqueKey(),
+              itemBuilder: (context, i) => containerOfListTile(i),
+            ),
     );
   }
 
@@ -118,32 +137,31 @@ class AdminManager extends StatelessWidget {
   Widget listTile(int i) {
     return ListTile(
       title: adminUserName(i),
-      trailing:
-      // _loginController.adminList[i].userName.contains('ehsanfallahi')
-          // ?
-      Icon(Icons.account_box_rounded)
-          // : deleteIconButton(i),
+      trailing: _adminController.allAdmins[i].fullName.contains('ehsanfallahi')
+          ? Icon(Icons.account_box_rounded,color: Colors.green,)
+          : deleteIconButton(i),
     );
   }
 
   Widget deleteIconButton(int i) {
     return IconButton(
-      icon: Icon(Icons.delete_forever_rounded, color: Colors.green),
+      icon: Icon(Icons.delete_forever_rounded, color: BUTTON_RED_COLOR),
       onPressed: () {
-        // _loginController.deleteAdmin(_loginController.adminList[i].id);
+        _adminController.deleteAdmin(_adminController.allAdmins[i].id);
       },
     );
   }
 
   Widget adminUserName(int i) {
-    return Text('admin',
-      // _loginController.adminList[i].userName,
+    return Text(
+      _adminController.allAdmins[i].fullName,
       style: textStyleOfAdminUserName(),
     );
   }
 
   TextStyle textStyleOfAdminUserName() {
     return TextStyle(
+      fontFamily: 'FontFa',
       fontSize: 16,
       color: Colors.green,
       fontWeight: FontWeight.w500,

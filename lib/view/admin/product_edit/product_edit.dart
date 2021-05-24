@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:medicinalplants_app/controller/admin/product/admin_productController.dart';
+import 'package:medicinalplants_app/controller/admin/product_edit/product_editController.dart';
 import 'package:medicinalplants_app/data/model/product/product.dart';
 import 'package:medicinalplants_app/util/constant.dart';
+import 'package:medicinalplants_app/widgets/cancel_button_appBar.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/description_textFormField.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/price_textFormField.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/title_textFormField.dart';
 import 'package:medicinalplants_app/widgets/text_form_field/weight_textFormField.dart';
 
 class ProductEdit extends StatelessWidget {
-  AdminProductController _adminProductController =
-      Get.put(AdminProductController());
+  ProductEditController _productEditController =
+      Get.put(ProductEditController());
   Product product;
 
   ProductEdit({this.product});
@@ -27,8 +28,8 @@ class ProductEdit extends StatelessWidget {
               fontFamily: 'MainFont',
               fontSize: 24,
               color: INPUT_TEXTFORM_COLOR)),
-      // leading: buttonCancelAppBar(),
-      // actions: [saveButtonAppBar()],
+      leading: buttonCancelAppBar(),
+      actions: [saveButtonAppBar()],
     );
     return Scaffold(
       appBar: appBar,
@@ -42,8 +43,7 @@ class ProductEdit extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   color: Colors.white,
                   image: DecorationImage(
-                      image: MemoryImage(
-                          _adminProductController.fromBase64(product.picture)),
+                      image: MemoryImage(fromBase64(product.picture)),
                       fit: BoxFit.fill,
                       colorFilter: product.isDisplay
                           ? ColorFilter.mode(
@@ -72,20 +72,35 @@ class ProductEdit extends StatelessWidget {
                                 color: BUTTON_RED_COLOR,
                                 size: 48,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                _productEditController
+                                    .deleteProduct(product.id);
+                                Get.back();
+                              },
                             ),
                           ),
                           Expanded(
                             flex: 1,
-                            child: IconButton(
-                                icon: Icon(
-                                  Icons.visibility_rounded,
-                                  color: Colors.lightBlue,
-                                  size: 48,
-                                ),
-                                onPressed: () {}),
+                            child: Obx(
+                              () => IconButton(
+                                  icon: _productEditController
+                                          .isDisplayProduct.value
+                                      ? Icon(
+                                          Icons.visibility_rounded,
+                                          color: Colors.lightBlue,
+                                          size: 48,
+                                        )
+                                      : Icon(Icons.visibility_off_rounded,
+                                          color: Colors.lightBlue, size: 48),
+                                  onPressed: () {
+                                    _productEditController
+                                            .isDisplayProduct.value =
+                                        !_productEditController
+                                            .isDisplayProduct.value;
+                                  }),
+                            ),
                           ),
-                          Expanded(flex:2,child: quantityCounter())
+                          Expanded(flex: 2, child: quantityCounter())
                         ],
                       ),
                     ),
@@ -94,17 +109,24 @@ class ProductEdit extends StatelessWidget {
               ),
             ),
             divider(),
-            TitleTextFormField(
-                controller: _adminProductController.titleController),
-            DescriptionTextFormField(
-              controller: _adminProductController.descriptionController,
+            Form(
+              key: _productEditController.formKeyEditProduct,
+              child: Column(
+                children: [
+                  TitleTextFormField(
+                      controller: _productEditController.titleController),
+                  DescriptionTextFormField(
+                    controller: _productEditController.descriptionController,
+                  ),
+                  WeightTextFormField(
+                    controller: _productEditController.weightController,
+                  ),
+                  PriceTextFormField(
+                    controller: _productEditController.priceController,
+                  )
+                ],
+              ),
             ),
-            WeightTextFormField(
-              controller: _adminProductController.weightController,
-            ),
-            PriceTextFormField(
-              controller: _adminProductController.priceController,
-            )
           ],
         ),
       ),
@@ -112,13 +134,13 @@ class ProductEdit extends StatelessWidget {
   }
 
   void initialControllers() {
-    _adminProductController.titleController =
+    _productEditController.titleController =
         TextEditingController(text: product.title);
-    _adminProductController.descriptionController =
+    _productEditController.descriptionController =
         TextEditingController(text: product.description);
-    _adminProductController.priceController =
+    _productEditController.priceController =
         TextEditingController(text: product.price.toString());
-    _adminProductController.weightController =
+    _productEditController.weightController =
         TextEditingController(text: product.weight.toString());
   }
 
@@ -138,28 +160,84 @@ class ProductEdit extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                // _cartController.incraseQuantity(product);
+                _productEditController.incraseQuantityCounter(product);
               },
               color: INPUT_TEXTFORM_COLOR,
             ),
-            // Obx(
-            //   () =>
-            Text(
-              '3',
-              style: TextStyle(
-                  color: INPUT_TEXTFORM_COLOR,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 21),
+            Obx(
+              () => Text(
+                _productEditController.quantityCounter.value.toString(),
+                style: TextStyle(
+                    color: INPUT_TEXTFORM_COLOR,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 21),
+              ),
             ),
-            // ),
             IconButton(
               icon: Icon(Icons.remove),
-              onPressed: () {},
+              onPressed: () {
+                _productEditController.decraseQuantityCounter();
+              },
               color: INPUT_TEXTFORM_COLOR,
             )
           ],
         ),
       ),
+    );
+  }
+
+  Widget buttonCancelAppBar() {
+    return CancelButtonAppBar();
+  }
+
+  Widget saveButtonAppBar() {
+    return saveButtonItem();
+  }
+
+  Widget saveButtonItem() {
+    return Padding(
+      padding: EdgeInsets.all(4),
+      child: Obx(
+        () => _productEditController.isLoading.value
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : saveButtonHandel(),
+      ),
+    );
+  }
+
+  Widget saveButtonHandel() {
+    return IconButton(
+      icon: _productEditController.isLoading.value
+          ? CircularProgressIndicator()
+          : Icon(
+              Icons.check_rounded,
+              color: INPUT_TEXTFORM_COLOR,
+              size: 24,
+            ),
+      onPressed: () {
+        if (_productEditController.formKeyEditProduct.currentState.validate()) {
+          product.title = _productEditController.titleController.text.trim();
+          product.description =
+              _productEditController.descriptionController.text.trim();
+          product.price =
+              int.parse(_productEditController.priceController.text.trim());
+          product.quantity = _productEditController.quantityCounter.value;
+          product.isDisplay = _productEditController.isDisplayProduct.value;
+          _productEditController.updateProduct(product);
+          Get.back();
+        }
+      },
+    );
+  }
+
+  TextStyle textStyleOfCancelText() {
+    return TextStyle(
+      color: Colors.white,
+      decoration: TextDecoration.underline,
+      letterSpacing: 1,
+      fontSize: 12,
     );
   }
 }

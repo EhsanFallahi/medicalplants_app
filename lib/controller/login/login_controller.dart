@@ -79,7 +79,7 @@ class LoginController extends GetxController {
         clearController();
         showSnackBar('register', 'you_are_registered', Colors.green);
         Get.offAll(()=>MainDashboard(person: person,),arguments: person);
-        print('you are register');
+
       } else {
         showSnackBar('network', 'network_error', Colors.redAccent);
       }

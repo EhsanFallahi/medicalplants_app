@@ -12,49 +12,53 @@ class AdminDashboard extends StatelessWidget {
   AdminDashboard({this.person});
   @override
   Widget build(BuildContext context) {
+    return mainBody();
+  }
+
+  Scaffold mainBody() {
     return Scaffold(
-        body: Center(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 40,
+      body: Center(
+    child: Column(
+      children: [
+        SizedBox(
+          height: 40,
+        ),
+        Image.asset(
+          'assets/images/logo.png',
+          width: 140,
+          height: 140,
+          fit: BoxFit.fill,
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Text(
+          'admin_panel'.tr,
+          style: TextStyle(
+              fontFamily: 'MainFont',
+              fontSize: 49,
+              fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          Column(
+            children: [
+              createNewDashboardpanel((){Get.to(()=>AdminManager(person:person));},Icons.supervisor_account_rounded,'admin'),
+              createNewDashboardpanel((){Get.to(()=>AddProduct(person: person,));},Icons.add_circle_outline,'add_product'),
+            ],
           ),
-          Image.asset(
-            'assets/images/logo.png',
-            width: 140,
-            height: 140,
-            fit: BoxFit.fill,
+          Column(
+            children: [
+              createNewDashboardpanel((){Get.to(()=>AdminProducts(person: person,));},Icons.shopping_basket_rounded,'products'),
+              createNewDashboardpanel((){Get.off(()=>LoginScreen());},Icons.exit_to_app_rounded,'exit'),
+            ],
           ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            'admin_panel'.tr,
-            style: TextStyle(
-                fontFamily: 'MainFont',
-                fontSize: 49,
-                fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            Column(
-              children: [
-                createNewDashboardpanel((){Get.to(()=>AdminManager());},Icons.supervisor_account_rounded,'admin'),
-                createNewDashboardpanel((){Get.to(()=>AddProduct());},Icons.add_circle_outline,'add_product'),
-              ],
-            ),
-            Column(
-              children: [
-                createNewDashboardpanel((){Get.to(()=>AdminProducts(person: person,));},Icons.shopping_basket_rounded,'products'),
-                createNewDashboardpanel((){Get.off(()=>LoginScreen());},Icons.exit_to_app_rounded,'exit'),
-              ],
-            ),
-          ]),
-        ],
-      ),
-    ));
+        ]),
+      ],
+    ),
+  ));
   }
 
   Widget createNewDashboardpanel(Function function,IconData panelIcon,String panelName) {

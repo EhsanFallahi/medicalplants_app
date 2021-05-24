@@ -13,13 +13,13 @@ class PriceTextFormField extends StatelessWidget {
         style: TextStyle(color: INPUT_TEXTFORM_COLOR),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: controller,
-        maxLength: 6,
+        maxLength: 7,
         validator: (value) {
           if (value.isEmpty) {
             return 'please_enter_some_text'.tr;
           }
-          if (value.length < 5) {
-            return 'must_more_than_5_character'.tr;
+          if (value.length < 1) {
+            return 'please_enter_some_text'.tr;
           } else
             return null;
         },
