@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
                       fontSize: 20,
                     ),
                   ))),
-      home: LoginScreen(),
+      home: SplashScreen(),
     );
   }
 }

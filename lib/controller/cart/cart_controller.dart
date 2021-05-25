@@ -186,6 +186,7 @@ class CartController extends GetxController {
   Future<dynamic> deleteCart(Cart tempCart) {
     return _cartRepository.deleteFromCart(tempCart.id).then((value) {
       if (validateStatusCode(value.statusCode)) {
+        isOrdered(false);
         print('deleted your cart');
         getAllCarts();
       }
